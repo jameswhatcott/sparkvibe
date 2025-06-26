@@ -1,12 +1,36 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Button, Alert } from 'react-native';
+import { router } from 'expo-router';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { createDocument, getDocuments } from '@/services/firebase';
 
 export default function HomeScreen() {
+  const testFirebase = async () => {
+    try {
+      // Test creating a document
+      await createDocument('test', {
+        message: 'Hello from SparkVibe!',
+        timestamp: new Date().toISOString()
+      });
+      
+      // Test reading documents
+      const data = await getDocuments('test');
+      
+      Alert.alert(
+        'Firebase Test Success!', 
+        `Created and retrieved ${data.length} documents. Check console for details.`
+      );
+      console.log('Firebase test data:', data);
+    } catch (error) {
+      Alert.alert('Firebase Test Failed', `Error: ${error}`);
+      console.error('Firebase test error:', error);
+    }
+  };
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,6 +44,17 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      
+      {/* Firebase Test Button */}
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Firebase Test</ThemedText>
+        <Button 
+          title="Test Firebase Connection" 
+          onPress={testFirebase}
+          color="#007AFF"
+        />
+      </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
