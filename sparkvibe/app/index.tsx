@@ -12,14 +12,26 @@ export default function Index() {
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       alert('Check your emails!');
-    } catch (e: any) {
-      alert('Registration failed: ' + err.message);
+    } catch (error: any) {
+      // React Native Firebase errors have a different structure
+      const errorMessage = error?.message || 'Registration failed';
+      alert('Registration failed: ' + errorMessage);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
+  };
 
-  const signIn = () => {
-
+  const signIn = async () => {
+    setLoading(true);
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+    } catch (error: any) {
+      // React Native Firebase errors have a different structure
+      const errorMessage = error?.message || 'Sign in failed';
+      alert('Sign in failed: ' + errorMessage);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
