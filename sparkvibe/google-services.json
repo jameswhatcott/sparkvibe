@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "844996724836",
+    "project_id": "sparkvibe-8bdc3",
+    "storage_bucket": "sparkvibe-8bdc3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844996724836:android:647fed45e62073fc7fb771",
+        "android_client_info": {
+          "package_name": "com.galaxies.sparkvibe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844996724836-6fbo3pefvmdg8b9a7bmcpgklmfukvebs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.galaxies.sparkvibe",
+            "certificate_hash": "23c64b760c2a40412e797135813437655ab873f0"
+          }
+        },
+        {
+          "client_id": "844996724836-mvt1g3di6sgin55n2aj6koni0ulicsn3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBENTuVMeYwV8klvsTxH47zaW5rgWgTN50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844996724836-mvt1g3di6sgin55n2aj6koni0ulicsn3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "844996724836-li8ktet82s7rlq2lim32jo2vnotuj0rv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.galaxies.sparkvibe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
