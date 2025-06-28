@@ -1,13 +1,21 @@
 import { useState } from "react";
-import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput } from "react-native"; 
+import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator } from "react-native"; 
+import auth from '@react-native-firebase/auth';
 
 export default function Index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const signUp = () => {
-
+  const signUp = async() => {
+    setLoading(true);
+    try {
+      await auth().createUserWithEmailAndPassword(email, password);
+      alert('Check your emails!');
+    } catch (e: any) {
+      alert('Registration failed: ' + err.message);
+    }
+    setLoading(false);
   }
 
   const signIn = () => {
