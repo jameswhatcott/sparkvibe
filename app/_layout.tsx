@@ -1,4 +1,4 @@
-import { auth, FirebaseAuthTypes } from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
@@ -20,6 +20,18 @@ export default function RootLayout() {
     return subscriber;
   }, []);
 
+  useEffect(() => {
+    if(initializing) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if(user && !inAuthGroup) {
+      router.replace('/(auth)/home');
+    } else if (!user && inAuthGroup) {
+      router.replace('/');
+    }
+  }, [user, initializing])
+
   if (initializing)
     return (
       <View
@@ -32,5 +44,13 @@ export default function RootLayout() {
       </View>
   );
   
-  return <Stack />;
+  return (
+
+    <Stack>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+
+    </Stack>
+
+  );
 }
