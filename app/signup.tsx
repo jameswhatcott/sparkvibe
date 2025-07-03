@@ -1,21 +1,27 @@
 import { useState } from "react";
-import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator } from "react-native"; 
+import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator, Text } from "react-native"; 
 import auth from '@react-native-firebase/auth';
 import { useRouter } from 'expo-router';
 
-export default function Index() {
+export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const signUp = async() => {
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
     try {
       await auth().createUserWithEmailAndPassword(email, password);
-      alert('Check your emails!');
+      alert('Account created successfully!');
+      router.back(); // Go back to login page
     } catch (error: any) {
-      // React Native Firebase errors have a different structure
       const errorMessage = error?.message || 'Registration failed';
       alert('Registration failed: ' + errorMessage);
     } finally {
@@ -23,26 +29,15 @@ export default function Index() {
     }
   };
 
-  const signIn = async () => {
-    setLoading(true);
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-    } catch (error: any) {
-      // React Native Firebase errors have a different structure
-      const errorMessage = error?.message || 'Sign in failed';
-      alert('Sign in failed: ' + errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const navigateToSignup = () => {
-    router.push('/signup');
+  const goBack = () => {
+    router.back();
   };
 
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView behavior="padding">
+        <Text style={styles.title}>Create Account</Text>
+        
         <TextInput
           style={styles.input}
           value={email}
@@ -50,7 +45,8 @@ export default function Index() {
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="Email"
-          />
+        />
+        
         <TextInput
           style={styles.input}
           value={password}
@@ -58,8 +54,23 @@ export default function Index() {
           secureTextEntry
           placeholder="Password"
         />
-        <Button onPress={navigateToSignup} title="Sign Up" />
-        <Button onPress={signIn} title="Login" />
+        
+        <TextInput
+          style={styles.input}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          placeholder="Confirm Password"
+        />
+        
+        {loading ? (
+          <ActivityIndicator size="large" style={styles.loader} />
+        ) : (
+          <>
+            <Button onPress={signUp} title="Create Account" />
+            <Button onPress={goBack} title="Back to Login" />
+          </>
+        )}
       </KeyboardAvoidingView>
     </View>
   );
@@ -71,6 +82,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
   input: {
     marginVertical: 4,
     height: 50,
@@ -78,9 +95,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
-
   },
-
-
-
-})
+  loader: {
+    marginTop: 20,
+  },
+});
