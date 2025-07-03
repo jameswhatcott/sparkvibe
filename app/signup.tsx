@@ -45,6 +45,8 @@ export default function Signup() {
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="Email"
+          textContentType="emailAddress"
+          autoComplete="email"
         />
         
         <TextInput
@@ -53,6 +55,10 @@ export default function Signup() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="Password"
+          textContentType="newPassword"
+          autoComplete="new-password"
+          autoCorrect={false}
+          spellCheck={false}
         />
         
         <TextInput
@@ -61,6 +67,10 @@ export default function Signup() {
           onChangeText={setConfirmPassword}
           secureTextEntry
           placeholder="Confirm Password"
+          textContentType="newPassword"
+          autoComplete="new-password"
+          autoCorrect={false}
+          spellCheck={false}
         />
         
         {loading ? (

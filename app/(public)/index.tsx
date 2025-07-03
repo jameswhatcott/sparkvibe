@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator } from "react-native"; 
+import { Button, View, Text, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator } from "react-native"; 
 import auth from '@react-native-firebase/auth';
 import { useRouter } from 'expo-router';
 
@@ -8,20 +8,6 @@ export default function Index() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const signUp = async() => {
-    setLoading(true);
-    try {
-      await auth().createUserWithEmailAndPassword(email, password);
-      alert('Check your emails!');
-    } catch (error: any) {
-      // React Native Firebase errors have a different structure
-      const errorMessage = error?.message || 'Registration failed';
-      alert('Registration failed: ' + errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const signIn = async () => {
     setLoading(true);
@@ -43,6 +29,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView behavior="padding">
+        <Text style={styles.title}>Welcome to SparkVibe!</Text>
         <TextInput
           style={styles.input}
           value={email}
@@ -57,6 +44,10 @@ export default function Index() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="Password"
+          textContentType="password"
+          autoComplete="password"
+          autoCorrect={false}
+          spellCheck={false}
         />
         <Button onPress={navigateToSignup} title="Sign Up" />
         <Button onPress={signIn} title="Login" />
@@ -79,6 +70,12 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
 
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
   },
 
 

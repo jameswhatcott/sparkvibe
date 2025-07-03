@@ -1,11 +1,15 @@
-import { Stack } from 'expo-router'
-import { View, Text } from 'react-native'
-import React from 'react'
+import { Stack } from 'expo-router';
 
-const Layout = () => {
+export default function AuthLayout() {
   return (
-    <Stack/>
-  )
+    <Stack>
+      <Stack.Screen 
+        name="home" 
+        options={{ 
+          title: "Home",
+          headerShown: true 
+        }} 
+      />
+    </Stack>
+  );
 }
-
-export default Layout
