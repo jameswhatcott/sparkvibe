@@ -23,7 +23,7 @@ export default function Index() {
   }
 
   const navigateToSignup = () => {
-    router.push('/signup');
+    router.push('/(public)/signup');
   };
 
   return (

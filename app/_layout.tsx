@@ -24,11 +24,12 @@ export default function RootLayout() {
     if(initializing) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inPublicGroup = segments[0] === '(public)';
 
     if(user && !inAuthGroup) {
       router.replace('/(auth)/home');
     } else if (!user && inAuthGroup) {
-      router.replace('/');
+      router.replace('/(public)');
     }
   }, [user, initializing])
 
@@ -46,7 +47,7 @@ export default function RootLayout() {
   
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(public)" options={{ headerShown: false }} />
       <Stack.Screen name="signup" options={{ title: "Sign Up" }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
