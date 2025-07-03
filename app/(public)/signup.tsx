@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, View, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator, Text } from "react-native"; 
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 
 export default function Signup() {
@@ -18,9 +19,25 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
+      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      
+      await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .set({
+          email: user.email,
+          onboardingCompleted: false,
+          onboardingData: {
+            name: '',
+            wakeTime: '',
+            notificationPreferences: {}
+          },
+          createdAt: firestore.FieldValue.serverTimestamp(),
+          updatedAt: firestore.FieldValue.serverTimestamp()
+        });
+
       alert('Account created successfully!');
-      router.back(); // Go back to login page
     } catch (error: any) {
       const errorMessage = error?.message || 'Registration failed';
       alert('Registration failed: ' + errorMessage);

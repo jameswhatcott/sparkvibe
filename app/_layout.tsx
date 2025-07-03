@@ -1,4 +1,5 @@
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import firestore from '@react-native-firebase/firestore';
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
@@ -6,6 +7,7 @@ import { View, ActivityIndicator } from "react-native";
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const router = useRouter();
   const segments = useSegments();
   
@@ -15,23 +17,54 @@ export default function RootLayout() {
     if (initializing) setInitializing(false);
   }
 
+  const checkOnboardingStatus = async (userId: string) => {
+    try {
+      const userDoc = await firestore()
+        .collection('users')
+        .doc(userId)
+        .get();
+      
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        setOnboardingCompleted(userData?.onboardingCompleted || false);
+      } else {
+        setOnboardingCompleted(false);
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      setOnboardingCompleted(false);
+    }
+  };
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
 
   useEffect(() => {
-    if(initializing) return;
+    if (user) {
+      checkOnboardingStatus(user.uid);
+    } else {
+      setOnboardingCompleted(null);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if(initializing || onboardingCompleted === null) return;
 
     const inAuthGroup = segments[0] === '(auth)';
     const inPublicGroup = segments[0] === '(public)';
 
     if(user && !inAuthGroup) {
-      router.replace('/(auth)/home');
+      if (onboardingCompleted) {
+        router.replace('/(auth)/home');
+      } else {
+        router.replace('/(auth)/onboarding');
+      }
     } else if (!user && inAuthGroup) {
       router.replace('/(public)');
     }
-  }, [user, initializing])
+  }, [user, initializing, onboardingCompleted])
 
   if (initializing)
     return (
