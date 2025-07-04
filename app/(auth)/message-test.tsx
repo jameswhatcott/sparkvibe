@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
-import { messageService, Message } from '../services/messageService';
+import { messageService, Message } from '../../services/messageService';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MessageTest() {
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
@@ -20,42 +21,49 @@ export default function MessageTest() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Message Selection Test</Text>
-      
-      <Button 
-        title={loading ? "Loading..." : "Get Personalized Message"} 
-        onPress={getPersonalizedMessage}
-        disabled={loading}
-      />
-      
-      {currentMessage && (
-        <View style={styles.messageContainer}>
-          <Text style={styles.messageText}>{currentMessage.text}</Text>
-          <View style={styles.messageMeta}>
-            <Text style={styles.metaText}>Category: {currentMessage.category}</Text>
-            <Text style={styles.metaText}>Mood: {currentMessage.mood}</Text>
-            <Text style={styles.metaText}>Length: {currentMessage.length}</Text>
-            <Text style={styles.metaText}>Tags: {currentMessage.tags.join(', ')}</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.title}>Message Selection Test</Text>
+        
+        <Button 
+          title={loading ? "Loading..." : "Get Personalized Message"} 
+          onPress={getPersonalizedMessage}
+          disabled={loading}
+        />
+        
+        {currentMessage && (
+          <View style={styles.messageContainer}>
+            <Text style={styles.messageText}>{currentMessage.text}</Text>
+            <View style={styles.messageMeta}>
+              <Text style={styles.metaText}>Category: {currentMessage.category}</Text>
+              <Text style={styles.metaText}>Mood: {currentMessage.mood}</Text>
+              <Text style={styles.metaText}>Length: {currentMessage.length}</Text>
+              <Text style={styles.metaText}>Tags: {currentMessage.tags.join(', ')}</Text>
+            </View>
           </View>
-        </View>
-      )}
-    </ScrollView>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    padding: 20,
+    paddingTop: 0,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
+    marginBottom: 30,
+    marginTop: 20,
   },
   messageContainer: {
     backgroundColor: 'white',

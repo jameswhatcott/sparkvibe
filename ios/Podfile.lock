@@ -3219,6 +3219,30 @@ PODS:
     - React-perflogger (= 0.79.4)
     - React-utils (= 0.79.4)
   - RecaptchaInterop (101.0.0)
+  - RNCPicker (2.11.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNDateTimePicker (8.4.1):
     - DoubleConversion
     - glog
@@ -3558,6 +3582,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -3773,6 +3798,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCPicker:
+    :path: "../node_modules/@react-native-picker/picker"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNFBApp:
@@ -3900,6 +3927,7 @@ SPEC CHECKSUMS:
   ReactCodegen: eac4e2cf6d9a6d737c000d4d1ea55db39f3cdd7a
   ReactCommon: eaa02856e231498d67f48d9b50e5a3bf5e5ee5b0
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RNCPicker: c402dfdfcf5e72ba6764234fb8d1bacd07d36094
   RNDateTimePicker: 9d94d39bcece53d0dfdb64e18b409d9005529191
   RNFBApp: 9ddaa4edee3ea7dfca8c866a4c1feca2439e2de6
   RNFBAuth: 0b56c55119d269aae2d699ec751a4b13c2aa24fd

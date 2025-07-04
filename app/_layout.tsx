@@ -81,7 +81,6 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="(public)" options={{ headerShown: false }} />
-      <Stack.Screen name="signup" options={{ title: "Sign Up" }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
   );
