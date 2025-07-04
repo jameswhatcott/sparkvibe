@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import NameStep from './components/NameStep';
 import WakeTimeStep from './components/WakeTimeStep';
 import NotificationStep from './components/NotificationStep';
+import { Timestamp } from '@firebase/firestore';
 
 interface OnboardingData {
   name: string;
@@ -16,6 +17,25 @@ interface OnboardingData {
     achievementAlerts: boolean;
     marketingEmails: boolean;
   };
+}
+
+// Messages collection
+interface Message {
+  id: string;
+  text: string;
+  category: 'motivational' | 'achievement' | 'mindfulness' | 'productivity';
+  mood: 'energetic' | 'calm' | 'focused' | 'grateful';
+  length: 'short' | 'medium' | 'long';
+  tags: string[]; // e.g., ['monday', 'workout', 'goals']
+  createdAt: Timestamp;
+}
+
+// User preferences for message selection
+interface UserMessagePreferences {
+  preferredCategories: string[];
+  preferredMood: string;
+  preferredLength: string;
+  excludedTags: string[];
 }
 
 export default function Onboarding() {
