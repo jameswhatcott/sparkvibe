@@ -1,23 +1,30 @@
-import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import AchievementsModal from '../components/AchievementsModal';
+import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MorningTaskModal from '../components/MorningTaskModal';
 import TaskCard from '../components/TaskCard';
+import RewardCard from '../components/RewardCard';
 import { taskService, MorningTask } from '../../services/taskService';
+import { rewardService, UserRewards } from '../../services/rewardService';
 
 const Page = () => {
     const user = auth().currentUser;
+    const [showAchievementsModal, setShowAchievementsModal] = useState(false);
     const [todaysTask, setTodaysTask] = useState<MorningTask | null>(null);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [taskStats, setTaskStats] = useState({ total: 0, completed: 0, streak: 0 });
+    const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
 
     useEffect(() => {
         loadTodaysTask();
         loadTaskStats();
+        loadUserRewards();
     }, []);
+
 
     const loadTodaysTask = async () => {
         try {
@@ -39,15 +46,25 @@ const Page = () => {
         }
     };
 
+    const loadUserRewards = async () => {
+        try {
+            const rewards = await rewardService.getUserRewards();
+            setUserRewards(rewards);
+        } catch (error) {
+            console.error('Error loading user rewards:', error);
+        }
+    };
+
     const handleRefresh = async () => {
         setRefreshing(true);
-        await Promise.all([loadTodaysTask(), loadTaskStats()]);
+        await Promise.all([loadTodaysTask(), loadTaskStats(), loadUserRewards()]);
         setRefreshing(false);
     };
 
     const handleTaskCreated = (task: MorningTask) => {
         setTodaysTask(task);
         loadTaskStats();
+        loadUserRewards();
     };
 
     const handleTaskCompleted = () => {
@@ -55,6 +72,14 @@ const Page = () => {
             setTodaysTask({ ...todaysTask, completed: true, completedAt: new Date() });
         }
         loadTaskStats();
+        loadUserRewards();
+    };
+
+    const handleViewAchievements = () => {
+        if (userRewards) {
+            console.log("Showing Achievements")
+            setShowAchievementsModal(true);
+        }
     };
 
     const getGreeting = () => {
@@ -92,6 +117,16 @@ const Page = () => {
                         <Text style={styles.statLabel}>Total Tasks</Text>
                     </View>
                 </View>
+
+                {/* Reward Card */}
+                {userRewards && (
+                    <View style={styles.taskSection}>
+                        <RewardCard 
+                            rewards={userRewards}
+                            onViewAchievements={handleViewAchievements}
+                        />
+                    </View>
+                )}
 
                 {/* Today's Task Section */}
                 <View style={styles.taskSection}>
@@ -149,6 +184,11 @@ const Page = () => {
                 onClose={() => setShowTaskModal(false)}
                 onTaskCreated={handleTaskCreated}
             />
+            <AchievementsModal
+                visible={showAchievementsModal}
+                onClose={() => setShowAchievementsModal(false)}
+                userRewards={userRewards!}
+/>
         </SafeAreaView>
     );
 };

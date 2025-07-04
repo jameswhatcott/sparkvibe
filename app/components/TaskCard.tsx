@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { MorningTask, taskService } from '../../services/taskService';
+import { rewardService } from '../../services/rewardService'; // Add this import
 
 interface TaskCardProps {
   task: MorningTask;
@@ -22,6 +23,30 @@ export default function TaskCard({ task, onTaskCompleted }: TaskCardProps) {
     try {
       const success = await taskService.completeTask(task.id);
       if (success) {
+        // Add reward recording
+        const completedAt = new Date();
+        const isEarlyBird = completedAt.getHours() < 8; // Before 8 AM
+        
+        try {
+          const rewardResult = await rewardService.recordTaskCompletion(completedAt, isEarlyBird);
+          console.log('Task completed! Points earned:', rewardResult.pointsEarned);
+          console.log('New level:', rewardResult.newLevel);
+          console.log('New achievements:', rewardResult.achievementsUnlocked);
+          
+          // Show achievement notification if any unlocked
+          if (rewardResult.achievementsUnlocked.length > 0) {
+            const achievement = rewardResult.achievementsUnlocked[0];
+            Alert.alert(
+              '🎉 Achievement Unlocked!',
+              `${achievement.icon} ${achievement.name}\n${achievement.description}`,
+              [{ text: 'Awesome!' }]
+            );
+          }
+        } catch (rewardError) {
+          console.error('Error recording reward:', rewardError);
+          // Don't fail the task completion if reward recording fails
+        }
+        
         onTaskCompleted();
       } else {
         Alert.alert('Error', 'Failed to complete task. Please try again.');
@@ -33,6 +58,8 @@ export default function TaskCard({ task, onTaskCompleted }: TaskCardProps) {
       setLoading(false);
     }
   };
+
+  // ... rest of the component stays the same
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
