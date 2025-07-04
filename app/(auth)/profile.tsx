@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, Platform, Scro
 import DateTimePicker from '@react-native-community/datetimepicker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { alarmService } from '../../services/alarmService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Profile() {
@@ -56,13 +55,6 @@ export default function Profile() {
           updatedAt: firestore.FieldValue.serverTimestamp(),
         });
 
-      // Update the actual alarm
-      if (alarmEnabled) {
-        await alarmService.scheduleAlarm(timeString, user.uid);
-      } else {
-        alarmService.cancelAlarm();
-      }
-
       Alert.alert('Success', 'Alarm settings updated!');
     } catch (error) {
       console.error('Error updating alarm settings:', error);
@@ -77,11 +69,6 @@ export default function Profile() {
     if (selectedTime) {
       setWakeTime(selectedTime);
     }
-  };
-
-  const testAlarm = async () => {
-    if (!user) return;
-    await alarmService.showWakeUpMessage(user.uid);
   };
 
   return (
@@ -131,13 +118,6 @@ export default function Profile() {
               {loading ? 'Updating...' : 'Save Settings'}
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.testButton]}
-            onPress={testAlarm}
-          >
-            <Text style={styles.buttonText}>Test Message</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -145,67 +125,64 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 0,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 30,
-    marginTop: 20,
-  },
-  section: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 20,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  settingLabel: {
-    fontSize: 16,
-  },
-  timeButton: {
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 8,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  timeText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  testButton: {
-    backgroundColor: '#34C759',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: '#f5f5f5',
+    },
+    scrollContent: {
+      padding: 20,
+      paddingTop: 0,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 30,
+      marginTop: 20,
+    },
+    section: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderRadius: 10,
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 20,
+    },
+    settingRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: '#eee',
+    },
+    settingLabel: {
+      fontSize: 16,
+    },
+    timeButton: {
+      backgroundColor: '#f0f0f0',
+      padding: 10,
+      borderRadius: 8,
+      minWidth: 80,
+      alignItems: 'center',
+    },
+    timeText: {
+      fontSize: 16,
+      fontWeight: '500',
+    },
+    button: {
+      backgroundColor: '#007AFF',
+      padding: 15,
+      borderRadius: 8,
+      marginTop: 20,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });

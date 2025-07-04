@@ -3,9 +3,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import NameStep from './components/NameStep';
-import WakeTimeStep from './components/WakeTimeStep';
-import NotificationStep from './components/NotificationStep';
+import NameStep from '../components/NameStep';
+import WakeTimeStep from '../components/WakeTimeStep';
+import NotificationStep from '../components/NotificationStep';
 import { Timestamp } from '@firebase/firestore';
 
 interface OnboardingData {

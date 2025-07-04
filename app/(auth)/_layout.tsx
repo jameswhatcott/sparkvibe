@@ -1,4 +1,3 @@
-import { Stack } from 'expo-router';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -44,12 +43,6 @@ export default function AuthLayout() {
         name="onboarding"
         options={{
           href: null, // Hide from tab bar
-        }}
-      />
-      <Tabs.Screen
-        name="components"
-        options={{
-          href: null, // Hide the entire components folder
         }}
       />
     </Tabs>
