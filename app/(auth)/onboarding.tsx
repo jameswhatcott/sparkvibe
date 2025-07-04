@@ -19,25 +19,6 @@ interface OnboardingData {
   };
 }
 
-// Messages collection
-interface Message {
-  id: string;
-  text: string;
-  category: 'motivational' | 'achievement' | 'mindfulness' | 'productivity';
-  mood: 'energetic' | 'calm' | 'focused' | 'grateful';
-  length: 'short' | 'medium' | 'long';
-  tags: string[]; // e.g., ['monday', 'workout', 'goals']
-  createdAt: Timestamp;
-}
-
-// User preferences for message selection
-interface UserMessagePreferences {
-  preferredCategories: string[];
-  preferredMood: string;
-  preferredLength: string;
-  excludedTags: string[];
-}
-
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -181,7 +162,7 @@ export default function Onboarding() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to SparkVibe!</Text>
-      <Text style={styles.subtitle}>Let's get to know you better</Text>
+      <Text style={styles.subtitle}>Let&apos;s get to know you better</Text>
       
       {/* Progress Indicator */}
       <View style={styles.progressContainer}>

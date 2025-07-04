@@ -1,24 +1,20 @@
 import { useState } from "react";
-import { Button, View, Text, StyleSheet, KeyboardAvoidingView, TextInput, ActivityIndicator } from "react-native"; 
+import { Button, View, Text, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity } from "react-native"; 
 import auth from '@react-native-firebase/auth';
 import { useRouter } from 'expo-router';
 
 export default function Index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const signIn = async () => {
-    setLoading(true);
     try {
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error: any) {
       // React Native Firebase errors have a different structure
       const errorMessage = error?.message || 'Sign in failed';
       alert('Sign in failed: ' + errorMessage);
-    } finally {
-      setLoading(false);
     }
   }
 

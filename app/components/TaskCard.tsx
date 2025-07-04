@@ -105,6 +105,10 @@ export default function TaskCard({ task, onTaskCompleted }: TaskCardProps) {
           <Text style={styles.completedBadgeText}>✓ Completed</Text>
         </View>
       )}
+
+      <Text style={styles.description}>
+        {task.description || 'Complete this task to build momentum for your day'}
+      </Text>
     </View>
   );
 }
@@ -186,5 +190,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 16,
   },
 }); 

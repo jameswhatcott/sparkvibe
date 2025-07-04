@@ -6,7 +6,6 @@ import firestore from '@react-native-firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { messageService } from '../../services/messageService';
 import MorningTaskModal from '../components/MorningTaskModal';
-import { taskService, MorningTask } from '../../services/taskService';
 
 export default function Profile() {
   const [wakeTime, setWakeTime] = useState(new Date());
@@ -18,7 +17,7 @@ export default function Profile() {
 
   useEffect(() => {
     loadUserSettings();
-  }, []);
+  }, [loadUserSettings]);
 
   const loadUserSettings = async () => {
     if (!user) return;

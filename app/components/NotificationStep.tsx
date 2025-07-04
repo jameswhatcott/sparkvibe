@@ -40,7 +40,7 @@ export default function NotificationStep({ onNext, onSkip, onBack, initialValue,
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <Text style={styles.title}>Notification Preferences</Text>
-      <Text style={styles.subtitle}>Choose what notifications you'd like to receive</Text>
+      <Text style={styles.description}>Choose how you&apos;d like to stay connected with SparkVibe</Text>
       
       <View style={styles.preferencesContainer}>
         <View style={styles.preferenceItem}>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  subtitle: {
+  description: {
     fontSize: 16,
     textAlign: 'center',
     color: '#666',

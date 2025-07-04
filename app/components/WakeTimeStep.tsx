@@ -43,7 +43,7 @@ export default function WakeTimeStep({ onNext, onSkip, onBack, initialValue }: W
   return (
     <View style={styles.container}>
       <Text style={styles.title}>What time do you want to wake up?</Text>
-      <Text style={styles.subtitle}>We'll use this to schedule your notifications</Text>
+      <Text style={styles.description}>When do you typically wake up? We&apos;ll use this to send you timely reminders.</Text>
       
       <View style={styles.timeDisplay}>
         <Text style={styles.timeText}>{formatTime(wakeTime)}</Text>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  subtitle: {
+  description: {
     fontSize: 16,
     textAlign: 'center',
     color: '#666',

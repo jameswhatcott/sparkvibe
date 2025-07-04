@@ -11,11 +11,23 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   
-  const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
-    console.log('onAuthStateChanged', user);
+  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
     setUser(user);
     if (initializing) setInitializing(false);
   }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, [initializing]);
+
+  useEffect(() => {
+    if (user) {
+      checkOnboardingStatus(user.uid);
+    } else {
+      setOnboardingCompleted(null);
+    }
+  }, [user]);
 
   const checkOnboardingStatus = async (userId: string) => {
     try {
@@ -24,7 +36,7 @@ export default function RootLayout() {
         .doc(userId)
         .get();
       
-      if (userDoc.exists) {
+      if (userDoc.exists()) {
         const userData = userDoc.data();
         setOnboardingCompleted(userData?.onboardingCompleted || false);
       } else {
@@ -36,47 +48,28 @@ export default function RootLayout() {
     }
   };
 
+  // Only navigate after initialization is complete
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      checkOnboardingStatus(user.uid);
-    } else {
-      setOnboardingCompleted(null);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if(initializing || onboardingCompleted === null) return;
-
-    const inAuthGroup = segments[0] === '(auth)';
-    const inPublicGroup = segments[0] === '(public)';
-
-    if(user && !inAuthGroup) {
-      if (onboardingCompleted) {
-        router.replace('/(auth)/home');
+    if (!initializing) { // Wait for auth to initialize
+      if (user) {
+        if (onboardingCompleted === false) {
+          router.replace('/(auth)/onboarding');
+        } else {
+          router.replace('/(auth)/home');
+        }
       } else {
-        router.replace('/(auth)/onboarding');
+        router.replace('/(public)');
       }
-    } else if (!user && inAuthGroup) {
-      router.replace('/(public)');
     }
-  }, [user, initializing, onboardingCompleted])
+  }, [user, onboardingCompleted, initializing, router]);
 
-  if (initializing)
+  if (initializing) {
     return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-         }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
-  );
+    );
+  }
   
   return (
     <Stack>

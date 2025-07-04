@@ -1,5 +1,5 @@
 import AchievementsModal from '../components/AchievementsModal';
-import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
