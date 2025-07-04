@@ -13,12 +13,38 @@ import { UserRewards, ACHIEVEMENTS } from '../../services/rewardService';
 interface AchievementsModalProps {
   visible: boolean;
   onClose: () => void;
-  userRewards: UserRewards;
+  userRewards: UserRewards | null;
 }
 
 const { width } = Dimensions.get('window');
 
 export default function AchievementsModal({ visible, onClose, userRewards }: AchievementsModalProps) {
+  // Early return if userRewards is null
+  if (!userRewards) {
+    return (
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={onClose}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Achievements</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Loading achievements...</Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
   const unlockedAchievementIds = userRewards.achievements.map(a => a.id);
   
   const allAchievements = [
@@ -232,6 +258,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#666',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
   },
   achievementsList: {
     flex: 1,

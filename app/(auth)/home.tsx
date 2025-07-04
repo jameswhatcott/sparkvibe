@@ -77,8 +77,10 @@ const Page = () => {
 
     const handleViewAchievements = () => {
         if (userRewards) {
-            console.log("Showing Achievements")
+            console.log("Showing Achievements");
             setShowAchievementsModal(true);
+        } else {
+            Alert.alert('Loading', 'Please wait while we load your achievements...');
         }
     };
 
@@ -187,7 +189,7 @@ const Page = () => {
             <AchievementsModal
                 visible={showAchievementsModal}
                 onClose={() => setShowAchievementsModal(false)}
-                userRewards={userRewards!}
+                userRewards={userRewards}
 />
         </SafeAreaView>
     );
