@@ -20,6 +20,7 @@ export default function Profile() {
     if (!user) return;
     
     try {
+      console.log('Loading user settings for user:', user.uid);
       const userDoc = await firestore()
         .collection('users')
         .doc(user.uid)
@@ -27,12 +28,16 @@ export default function Profile() {
       
       if (userDoc.exists) {
         const userData = userDoc.data();
+        console.log('User data loaded:', userData);
         const savedTime = userData?.onboardingData?.wakeTime || '07:00';
         const [hours, minutes] = savedTime.split(':').map(Number);
         const timeDate = new Date();
         timeDate.setHours(hours, minutes, 0, 0);
         setWakeTime(timeDate);
         setAlarmEnabled(userData?.alarmEnabled !== false);
+        console.log('Settings loaded - Wake time:', savedTime, 'Alarm enabled:', userData?.alarmEnabled !== false);
+      } else {
+        console.log('User document does not exist');
       }
     } catch (error) {
       console.error('Error loading user settings:', error);
@@ -40,33 +45,57 @@ export default function Profile() {
   };
 
   const updateAlarmSettings = async () => {
-    if (!user) return;
+    if (!user) {
+      console.error('No user found');
+      return;
+    }
     
     setLoading(true);
+    console.log('Starting to update alarm settings...');
+    
     try {
       const timeString = `${wakeTime.getHours().toString().padStart(2, '0')}:${wakeTime.getMinutes().toString().padStart(2, '0')}`;
+      console.log('Updating wake time to:', timeString);
+      console.log('Alarm enabled:', alarmEnabled);
+      
+      const updateData = {
+        'onboardingData.wakeTime': timeString,
+        alarmEnabled: alarmEnabled,
+        updatedAt: firestore.FieldValue.serverTimestamp(),
+      };
+      
+      console.log('Updating Firestore with data:', updateData);
       
       await firestore()
         .collection('users')
         .doc(user.uid)
-        .update({
-          'onboardingData.wakeTime': timeString,
-          alarmEnabled: alarmEnabled,
-          updatedAt: firestore.FieldValue.serverTimestamp(),
-        });
+        .update(updateData);
 
+      console.log('Firestore update successful!');
       Alert.alert('Success', 'Alarm settings updated!');
     } catch (error) {
       console.error('Error updating alarm settings:', error);
-      Alert.alert('Error', 'Failed to update alarm settings');
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      
+      // More specific error handling
+      if (error.code === 'firestore/not-found') {
+        Alert.alert('Error', 'User document not found. Please try signing out and signing back in.');
+      } else if (error.code === 'firestore/permission-denied') {
+        Alert.alert('Error', 'Permission denied. Please check your Firebase rules.');
+      } else {
+        Alert.alert('Error', 'Failed to update alarm settings. Please try again.');
+      }
     } finally {
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };
 
   const onTimeChange = (event: any, selectedTime?: Date) => {
+    console.log('Time picker event:', event.type);
     setShowTimePicker(Platform.OS === 'ios');
     if (selectedTime) {
+      console.log('Selected time:', selectedTime);
       setWakeTime(selectedTime);
     }
   };
@@ -83,7 +112,10 @@ export default function Profile() {
             <Text style={styles.settingLabel}>Enable Alarm</Text>
             <Switch
               value={alarmEnabled}
-              onValueChange={setAlarmEnabled}
+              onValueChange={(value) => {
+                console.log('Alarm enabled changed to:', value);
+                setAlarmEnabled(value);
+              }}
             />
           </View>
           
@@ -91,7 +123,10 @@ export default function Profile() {
             <Text style={styles.settingLabel}>Wake Time</Text>
             <TouchableOpacity 
               style={styles.timeButton}
-              onPress={() => setShowTimePicker(true)}
+              onPress={() => {
+                console.log('Opening time picker');
+                setShowTimePicker(true);
+              }}
             >
               <Text style={styles.timeText}>
                 {wakeTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -100,7 +100,11 @@ class MessageService {
   // Get current context for message selection
   private getCurrentContext(): MessageContext {
     const now = new Date();
-    const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'lowercase' });
+    
+    // Fix the day of week issue
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayOfWeek = days[now.getDay()];
+    
     const hour = now.getHours();
     
     let timeOfDay: 'early' | 'morning' | 'afternoon' | 'evening';
@@ -109,10 +113,11 @@ class MessageService {
     else if (hour < 17) timeOfDay = 'afternoon';
     else timeOfDay = 'evening';
 
+    console.log('Current context:', { dayOfWeek, timeOfDay, hour });
+
     return {
       dayOfWeek,
       timeOfDay,
-      // You can add more context here later (weather, calendar, etc.)
     };
   }
 
@@ -123,10 +128,13 @@ class MessageService {
         .collection('messages')
         .get();
       
-      return messagesSnapshot.docs.map(doc => ({
+      const messages = messagesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Message[];
+      
+      console.log('Available messages:', messages.length);
+      return messages;
     } catch (error) {
       console.error('Error getting messages:', error);
       return [];
@@ -139,7 +147,10 @@ class MessageService {
     userPrefs: UserMessagePreferences, 
     context: MessageContext
   ): Message | null {
-    if (messages.length === 0) return null;
+    if (messages.length === 0) {
+      console.log('No messages available');
+      return null;
+    }
 
     // Filter out recently used messages
     const availableMessages = messages.filter(
@@ -148,6 +159,7 @@ class MessageService {
 
     // If no messages available, reset history and use all messages
     const messagesToUse = availableMessages.length > 0 ? availableMessages : messages;
+    console.log('Messages to choose from:', messagesToUse.length);
 
     // Score each message
     const scoredMessages = messagesToUse.map(message => ({
@@ -158,7 +170,10 @@ class MessageService {
     // Sort by score (highest first) and return the best one
     scoredMessages.sort((a, b) => b.score - a.score);
     
-    return scoredMessages[0]?.message || null;
+    const selectedMessage = scoredMessages[0]?.message || null;
+    console.log('Selected message:', selectedMessage?.text);
+    
+    return selectedMessage;
   }
 
   // Calculate a score for a message based on preferences and context
@@ -199,7 +214,7 @@ class MessageService {
       userPrefs.excludedTags.includes(tag)
     );
     if (hasExcludedTag) {
-      score -= 15; // Heavy penalty for excluded tags
+      score -= 15;
     }
 
     // Random factor to add variety
