@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import NameStep from './components/NameStep';
 import WakeTimeStep from './components/WakeTimeStep';
 import NotificationStep from './components/NotificationStep';
@@ -17,6 +20,8 @@ interface OnboardingData {
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     name: '',
     wakeTime: '',
@@ -68,9 +73,46 @@ export default function Onboarding() {
   };
 
   const completeOnboarding = async () => {
-    // TODO: Save onboarding data to Firebase
-    console.log('Onboarding completed:', onboardingData);
-    // Navigate to home
+    setLoading(true);
+    try {
+      console.log('Starting onboarding completion...');
+      
+      const user = auth().currentUser;
+      console.log('Current user:', user?.uid);
+      
+      if (!user) {
+        console.error('No user found');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Updating Firestore document...');
+      
+      // Update the user document in Firestore
+      await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          onboardingCompleted: true,
+          onboardingData: onboardingData,
+          updatedAt: firestore.FieldValue.serverTimestamp(),
+        });
+
+      console.log('Firestore update successful!');
+      console.log('Onboarding completed:', onboardingData);
+      
+      // Navigate to home page
+      console.log('Navigating to home...');
+      router.replace('/(auth)/home');
+      
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      alert('Failed to save onboarding data. Please try again.');
+    } finally {
+      console.log('Setting loading to false');
+      setLoading(false);
+    }
   };
 
   const renderStep = () => {
@@ -99,6 +141,7 @@ export default function Onboarding() {
             onSkip={handleSkip}
             onBack={handleBack}
             initialValue={onboardingData.notificationPreferences}
+            loading={loading}
           />
         );
       default:

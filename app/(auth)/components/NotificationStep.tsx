@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Switch, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 
 interface NotificationPreferences {
   dailyReminders: boolean;
@@ -13,9 +13,10 @@ interface NotificationStepProps {
   onSkip: () => void;
   onBack: () => void;
   initialValue?: NotificationPreferences;
+  loading?: boolean;
 }
 
-export default function NotificationStep({ onNext, onSkip, onBack, initialValue }: NotificationStepProps) {
+export default function NotificationStep({ onNext, onSkip, onBack, initialValue, loading = false }: NotificationStepProps) {
   const [preferences, setPreferences] = useState<NotificationPreferences>(
     initialValue || {
       dailyReminders: true,
@@ -88,9 +89,13 @@ export default function NotificationStep({ onNext, onSkip, onBack, initialValue 
       </View>
       
       <View style={styles.buttonContainer}>
-        <Button title="Back" onPress={onBack} color="#666" />
-        <Button title="Skip" onPress={onSkip} color="#666" />
-        <Button title="Complete" onPress={handleNext} />
+        <Button title="Back" onPress={onBack} color="#666" disabled={loading} />
+        <Button title="Skip" onPress={onSkip} color="#666" disabled={loading} />
+        {loading ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <Button title="Complete" onPress={handleNext} />
+        )}
       </View>
     </ScrollView>
   );
