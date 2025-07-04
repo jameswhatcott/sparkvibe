@@ -19,9 +19,11 @@ export default function Signup() {
 
     setLoading(true);
     try {
+      console.log('Creating user account...');
       const userCredential = await auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
+      console.log('User created, creating Firestore document...');
       await firestore()
         .collection('users')
         .doc(user.uid)
@@ -35,10 +37,13 @@ export default function Signup() {
           },
           createdAt: firestore.FieldValue.serverTimestamp(),
           updatedAt: firestore.FieldValue.serverTimestamp()
-        });
+        }, { merge: true });
 
+      console.log('User document created successfully');
       alert('Account created successfully!');
+      // The user will be automatically redirected by the auth state change in _layout.tsx
     } catch (error: any) {
+      console.error('Registration error:', error);
       const errorMessage = error?.message || 'Registration failed';
       alert('Registration failed: ' + errorMessage);
     } finally {

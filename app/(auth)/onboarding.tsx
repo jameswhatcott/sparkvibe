@@ -86,17 +86,18 @@ export default function Onboarding() {
         return;
       }
 
+      console.log('Onboarding data to save:', onboardingData);
       console.log('Updating Firestore document...');
       
       // Update the user document in Firestore
       await firestore()
         .collection('users')
         .doc(user.uid)
-        .update({
+        .set({
           onboardingCompleted: true,
           onboardingData: onboardingData,
           updatedAt: firestore.FieldValue.serverTimestamp(),
-        });
+        }, { merge: true });
 
       console.log('Firestore update successful!');
       console.log('Onboarding completed:', onboardingData);
@@ -105,10 +106,18 @@ export default function Onboarding() {
       console.log('Navigating to home...');
       router.replace('/(auth)/home');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error completing onboarding:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
-      alert('Failed to save onboarding data. Please try again.');
+      
+      // More specific error handling
+      if (error.code === 'firestore/not-found') {
+        alert('User document not found. Please try signing out and signing back in.');
+      } else if (error.code === 'firestore/permission-denied') {
+        alert('Permission denied. Please check your Firebase rules.');
+      } else {
+        alert('Failed to save onboarding data. Please try again.');
+      }
     } finally {
       console.log('Setting loading to false');
       setLoading(false);
