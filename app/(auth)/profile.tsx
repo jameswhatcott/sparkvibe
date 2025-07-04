@@ -5,12 +5,15 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { messageService } from '../../services/messageService';
+import MorningTaskModal from '../components/MorningTaskModal';
+import { taskService, MorningTask } from '../../services/taskService';
 
 export default function Profile() {
   const [wakeTime, setWakeTime] = useState(new Date());
   const [alarmEnabled, setAlarmEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
   const user = auth().currentUser;
 
   useEffect(() => {
@@ -27,7 +30,7 @@ export default function Profile() {
         .doc(user.uid)
         .get();
       
-      if (userDoc.exists) {
+      if (userDoc.exists()) {
         const userData = userDoc.data();
         console.log('User data loaded:', userData);
         const savedTime = userData?.onboardingData?.wakeTime || '07:00';
@@ -35,7 +38,7 @@ export default function Profile() {
         const timeDate = new Date();
         timeDate.setHours(hours, minutes, 0, 0);
         setWakeTime(timeDate);
-        setAlarmEnabled(userData?.alarmEnabled !== false);
+        setAlarmEnabled(userData?.alarmEnabled ?? true);
         console.log('Settings loaded - Wake time:', savedTime, 'Alarm enabled:', userData?.alarmEnabled !== false);
       } else {
         console.log('User document does not exist');
@@ -74,14 +77,14 @@ export default function Profile() {
 
       console.log('Firestore update successful!');
       Alert.alert('Success', 'Alarm settings updated!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating alarm settings:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
       
       // More specific error handling
-      if (error.code === 'firestore/not-found') {
+      if (error?.code === 'firestore/not-found') {
         Alert.alert('Error', 'User document not found. Please try signing out and signing back in.');
-      } else if (error.code === 'firestore/permission-denied') {
+      } else if (error?.code === 'firestore/permission-denied') {
         Alert.alert('Error', 'Permission denied. Please check your Firebase rules.');
       } else {
         Alert.alert('Error', 'Failed to update alarm settings. Please try again.');
@@ -119,7 +122,10 @@ export default function Profile() {
             },
             {
               text: 'Start My Day',
-              onPress: () => console.log('Start day pressed')
+              onPress: () => {
+                console.log('Start day pressed - showing task modal');
+                setShowTaskModal(true);
+              }
             }
           ],
           { cancelable: false }
@@ -131,6 +137,11 @@ export default function Profile() {
       console.error('Error testing alarm:', error);
       Alert.alert('Error', 'Failed to get message');
     }
+  };
+
+  const handleTaskCreated = (task: MorningTask) => {
+    console.log('Task created:', task.title);
+    Alert.alert('Task Set!', `Your morning task "${task.title}" has been set for today.`);
   };
 
   const onTimeChange = (event: any, selectedTime?: Date) => {
@@ -204,6 +215,12 @@ export default function Profile() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <MorningTaskModal
+        visible={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        onTaskCreated={handleTaskCreated}
+      />
     </SafeAreaView>
   );
 }
