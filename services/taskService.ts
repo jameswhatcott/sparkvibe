@@ -4,6 +4,7 @@ import auth from '@react-native-firebase/auth';
 export interface MorningTask {
   id: string;
   title: string;
+  description?: string;
   completed: boolean;
   createdAt: Date;
   completedAt?: Date;
@@ -51,6 +52,7 @@ class TaskService {
         return {
           id: taskDoc.docs[0].id,
           title: taskData.title,
+          description: taskData.description || '',
           completed: taskData.completed || false,
           createdAt: taskData.createdAt.toDate(),
           completedAt: taskData.completedAt?.toDate(),
@@ -79,6 +81,7 @@ class TaskService {
 
       const taskData = {
         title,
+        description: '',
         completed: false,
         createdAt: firestore.FieldValue.serverTimestamp(),
         isCustom,
@@ -93,6 +96,7 @@ class TaskService {
       return {
         id: docRef.id,
         title,
+        description: '',
         completed: false,
         createdAt: new Date(),
         isCustom,
@@ -143,6 +147,7 @@ class TaskService {
         return {
           id: doc.id,
           title: data.title,
+          description: data.description || '',
           completed: data.completed || false,
           createdAt: data.createdAt.toDate(),
           completedAt: data.completedAt?.toDate(),

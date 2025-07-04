@@ -73,7 +73,7 @@ class MessageService {
         .doc(userId)
         .get();
       
-      if (userDoc.exists) {
+      if (userDoc.exists()) {
         const userData = userDoc.data();
         return {
           preferredCategories: userData?.messagePreferences?.preferredCategories || ['motivational'],
@@ -231,7 +231,7 @@ class MessageService {
         .doc(userId)
         .get();
       
-      if (userDoc.exists) {
+      if (userDoc.exists()) {
         const userData = userDoc.data();
         const currentHistory = userData?.messagePreferences?.lastMessageIds || [];
         

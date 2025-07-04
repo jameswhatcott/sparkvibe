@@ -5,6 +5,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { messageService } from '../../services/messageService';
+import { MorningTask } from '@/services/taskService';
 import MorningTaskModal from '../components/MorningTaskModal';
 
 export default function Profile() {
