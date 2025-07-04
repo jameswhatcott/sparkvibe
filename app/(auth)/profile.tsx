@@ -4,6 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { messageService } from '../../services/messageService';
 
 export default function Profile() {
   const [wakeTime, setWakeTime] = useState(new Date());
@@ -91,6 +92,47 @@ export default function Profile() {
     }
   };
 
+  const testAlarm = async () => {
+    if (!user) {
+      Alert.alert('Error', 'No user found');
+      return;
+    }
+
+    console.log('Testing alarm...');
+    
+    try {
+      // Get a personalized message
+      const message = await messageService.getPersonalizedMessage();
+      
+      if (message) {
+        console.log('Got message:', message.text);
+        
+        // Show the message as an alert (simulating the alarm notification)
+        Alert.alert(
+          '🌅 Good Morning!',
+          message.text,
+          [
+            {
+              text: 'Snooze',
+              style: 'cancel',
+              onPress: () => console.log('Snooze pressed')
+            },
+            {
+              text: 'Start My Day',
+              onPress: () => console.log('Start day pressed')
+            }
+          ],
+          { cancelable: false }
+        );
+      } else {
+        Alert.alert('Error', 'No message available');
+      }
+    } catch (error) {
+      console.error('Error testing alarm:', error);
+      Alert.alert('Error', 'Failed to get message');
+    }
+  };
+
   const onTimeChange = (event: any, selectedTime?: Date) => {
     console.log('Time picker event:', event.type);
     setShowTimePicker(Platform.OS === 'ios');
@@ -153,6 +195,13 @@ export default function Profile() {
               {loading ? 'Updating...' : 'Save Settings'}
             </Text>
           </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.button, styles.testButton]}
+            onPress={testAlarm}
+          >
+            <Text style={styles.buttonText}>Test Alarm</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -214,6 +263,9 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       marginTop: 20,
       alignItems: 'center',
+    },
+    testButton: {
+      backgroundColor: '#FF9500',
     },
     buttonText: {
       color: 'white',
