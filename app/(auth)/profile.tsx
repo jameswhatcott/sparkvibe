@@ -16,36 +16,36 @@ export default function Profile() {
   const user = auth().currentUser;
 
   useEffect(() => {
-    loadUserSettings();
-  }, [loadUserSettings]);
-
-  const loadUserSettings = async () => {
-    if (!user) return;
-    
-    try {
-      console.log('Loading user settings for user:', user.uid);
-      const userDoc = await firestore()
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    const loadUserSettings = async () => {
+      if (!user) return;
       
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        console.log('User data loaded:', userData);
-        const savedTime = userData?.onboardingData?.wakeTime || '07:00';
-        const [hours, minutes] = savedTime.split(':').map(Number);
-        const timeDate = new Date();
-        timeDate.setHours(hours, minutes, 0, 0);
-        setWakeTime(timeDate);
-        setAlarmEnabled(userData?.alarmEnabled ?? true);
-        console.log('Settings loaded - Wake time:', savedTime, 'Alarm enabled:', userData?.alarmEnabled !== false);
-      } else {
-        console.log('User document does not exist');
+      try {
+        console.log('Loading user settings for user:', user.uid);
+        const userDoc = await firestore()
+          .collection('users')
+          .doc(user.uid)
+          .get();
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          console.log('User data loaded:', userData);
+          const savedTime = userData?.onboardingData?.wakeTime || '07:00';
+          const [hours, minutes] = savedTime.split(':').map(Number);
+          const timeDate = new Date();
+          timeDate.setHours(hours, minutes, 0, 0);
+          setWakeTime(timeDate);
+          setAlarmEnabled(userData?.alarmEnabled ?? true);
+          console.log('Settings loaded - Wake time:', savedTime, 'Alarm enabled:', userData?.alarmEnabled !== false);
+        } else {
+          console.log('User document does not exist');
+        }
+      } catch (error) {
+        console.error('Error loading user settings:', error);
       }
-    } catch (error) {
-      console.error('Error loading user settings:', error);
-    }
-  };
+    };
+
+    loadUserSettings();
+  }, [user]);
 
   const updateAlarmSettings = async () => {
     if (!user) {

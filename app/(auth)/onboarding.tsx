@@ -6,7 +6,6 @@ import firestore from '@react-native-firebase/firestore';
 import NameStep from '../components/NameStep';
 import WakeTimeStep from '../components/WakeTimeStep';
 import NotificationStep from '../components/NotificationStep';
-import { Timestamp } from '@firebase/firestore';
 
 interface OnboardingData {
   name: string;

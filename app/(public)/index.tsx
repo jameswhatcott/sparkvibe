@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, View, Text, StyleSheet, KeyboardAvoidingView, TextInput, TouchableOpacity } from "react-native"; 
+import { Button, View, Text, StyleSheet, KeyboardAvoidingView, TextInput } from "react-native"; 
 import auth from '@react-native-firebase/auth';
 import { useRouter } from 'expo-router';
 

@@ -1,6 +1,6 @@
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from '@react-native-firebase/firestore';
-import { Stack, useRouter, useSegments } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 
@@ -9,7 +9,6 @@ export default function RootLayout() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const router = useRouter();
-  const segments = useSegments();
   
   function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
     setUser(user);
@@ -19,7 +18,7 @@ export default function RootLayout() {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
-  }, [initializing]);
+  }, []);
 
   useEffect(() => {
     if (user) {
