@@ -1,6 +1,7 @@
 import AchievementsModal from '../components/AchievementsModal';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MorningTaskModal from '../components/MorningTaskModal';
@@ -18,13 +19,36 @@ const Page = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [taskStats, setTaskStats] = useState({ total: 0, completed: 0, streak: 0 });
     const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
+    const [userName, setUserName] = useState<string>('');
 
     useEffect(() => {
+        loadUserData();
         loadTodaysTask();
         loadTaskStats();
         loadUserRewards();
     }, []);
 
+    const loadUserData = async () => {
+        if (!user) return;
+        
+        try {
+            const userDoc = await firestore()
+                .collection('users')
+                .doc(user.uid)
+                .get();
+            
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const name = userData?.onboardingData?.name || user?.email?.split('@')[0] || 'there';
+                setUserName(name);
+            } else {
+                setUserName(user?.email?.split('@')[0] || 'there');
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            setUserName(user?.email?.split('@')[0] || 'there');
+        }
+    };
 
     const loadTodaysTask = async () => {
         try {
@@ -100,7 +124,7 @@ const Page = () => {
                 }
             >
                 <View style={styles.header}>
-                    <Text style={styles.greeting}>{getGreeting()}, {user?.email?.split('@')[0] || 'there'}!</Text>
+                    <Text style={styles.greeting}>{getGreeting()}, {userName}!</Text>
                     <Text style={styles.subtitle}>Let&apos;s build momentum for your day</Text>
                 </View>
 
