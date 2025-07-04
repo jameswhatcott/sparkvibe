@@ -68,7 +68,7 @@ export default function TaskCard({ task, onTaskCompleted }: TaskCardProps) {
   return (
     <View style={[styles.container, task.completed && styles.completedContainer]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Today's Morning Task</Text>
+        <Text style={styles.title}>Today&apos;s Morning Task</Text>
         <Text style={styles.time}>
           Created at {formatTime(task.createdAt)}
         </Text>

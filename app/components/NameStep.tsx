@@ -26,7 +26,7 @@ export default function NameStep({ onNext, onSkip, initialValue = '' }: NameStep
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What's your name?</Text>
+      <Text style={styles.title}>What&apos;s your name?</Text>
       <Text style={styles.subtitle}>We&apos;ll use this to personalize your experience</Text>
       
       <TextInput

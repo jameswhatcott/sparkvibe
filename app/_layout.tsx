@@ -10,15 +10,15 @@ export default function RootLayout() {
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const router = useRouter();
   
-  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
   useEffect(() => {
+    const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    };
+
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
-  }, []);
+  }, [initializing]); // Only depend on initializing
 
   useEffect(() => {
     if (user) {

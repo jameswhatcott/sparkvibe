@@ -22,33 +22,33 @@ const Page = () => {
     const [userName, setUserName] = useState<string>('');
 
     useEffect(() => {
+        const loadUserData = async () => {
+            if (!user) return;
+            
+            try {
+                const userDoc = await firestore()
+                    .collection('users')
+                    .doc(user.uid)
+                    .get();
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const name = userData?.onboardingData?.name || user?.email?.split('@')[0] || 'there';
+                    setUserName(name);
+                } else {
+                    setUserName(user?.email?.split('@')[0] || 'there');
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                setUserName(user?.email?.split('@')[0] || 'there');
+            }
+        };
+
         loadUserData();
         loadTodaysTask();
         loadTaskStats();
         loadUserRewards();
-    }, []);
-
-    const loadUserData = async () => {
-        if (!user) return;
-        
-        try {
-            const userDoc = await firestore()
-                .collection('users')
-                .doc(user.uid)
-                .get();
-            
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                const name = userData?.onboardingData?.name || user?.email?.split('@')[0] || 'there';
-                setUserName(name);
-            } else {
-                setUserName(user?.email?.split('@')[0] || 'there');
-            }
-        } catch (error) {
-            console.error('Error loading user data:', error);
-            setUserName(user?.email?.split('@')[0] || 'there');
-        }
-    };
+    }, [user]);
 
     const loadTodaysTask = async () => {
         try {
