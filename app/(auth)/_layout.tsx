@@ -40,6 +40,15 @@ export default function AuthLayout() {
         }}
       />
       <Tabs.Screen
+      name="recording"
+      options={{
+        title: 'Recording',
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="mic" size={size} color={color} />
+        ),
+      }}
+      />
+      <Tabs.Screen
         name="onboarding"
         options={{
           href: null, // Hide from tab bar
